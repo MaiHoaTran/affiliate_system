@@ -1,0 +1,9 @@
+CREATE TABLE users
+(
+    id         BIGSERIAL PRIMARY KEY,
+    email      VARCHAR(255) UNIQUE NOT NULL,
+    password   TEXT                NOT NULL,
+    is_admin   BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ         NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_container
+    env_file:
+      - ./.env
+    ports:
+      - "2345:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    container_name: affiliate_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8080"
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:

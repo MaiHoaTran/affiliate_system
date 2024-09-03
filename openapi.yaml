@@ -1,0 +1,372 @@
+---
+openapi: "3.0.0"
+info:
+  title: affiliate
+  version: 0.1.0
+  description: Affiliate system - With every legit paid user referred by you, you get 19$ of commissions.
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /api/v1/signup:
+    post:
+      operationId: signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignupRequest"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignupResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          description: no content
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /api/v1/users/jwt:
+    post:
+      operationId: generateToken
+      security:
+        - basicAuth: []
+      responses:
+        200:
+          description: JWT Token generated successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        401:
+          description: no content
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /api/v1/user/{user_id}/commissions/total:
+    get:
+      operationId: GetTotalCommissionAmountByUserIdAndStatus
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: status
+          schema:
+            $ref: "#/components/schemas/CommissionStatus"
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TotalCommissionResponse"
+        401:
+          description: no content
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /api/v1/user/{user_id}/referrals:
+    get:
+      operationId: Get all referrals for user
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReferralResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/admin/users:
+    post:
+      operationId: CreateAdminUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAdminUserRequest"
+      responses:
+        204:
+          description: No Content
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          description: no content
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /api/v1/admin/affiliates:
+    get:
+      operationId: GetAllAffiliates
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AffiliateResponse"
+        401:
+          description: no content
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /api/v1/admin/commission/{commission_id}:
+    patch:
+      operationId: UpdateCommissionStatusByCommissionId
+      parameters:
+        - in: path
+          name: commission_id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCommissionRequest"
+      responses:
+        204:
+          description: No Content
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          description: no content
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /api/v1/admin/affiliate/{affiliate_id}/commissions:
+    patch:
+      operationId: updateCommissionStatusesByAffiliateId
+      parameters:
+        - in: path
+          name: affiliate_id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCommissionRequest"
+      responses:
+        204:
+          description: No Content
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          description: no content
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    get:
+      operationId: getAllCommissionsByAffiliateId
+      parameters:
+        - in: path
+          name: affiliate_id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CommissionResponse"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/webhook/paypal:
+    post:
+      operationId: handlePaypalWebhookEvent
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        204:
+          description: No Content
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  responses:
+    InternalServerError:
+      description: "An unknown error occurred while handling the request."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    BadRequest:
+      description: "Bad Request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    ErrorResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/ApiError"
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            id:
+              type: string
+              example: d926f9f6-3c2e-4dac-852c-b79e816bbfc1
+            code:
+              type: string
+              example: BAD_REQUEST
+            title:
+              type: string
+              example: Validation error
+            detail:
+              type: string
+              example: ""
+          required:
+            - id
+            - code
+            - title
+      required:
+        - error
+    SignupRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        ref_code:
+          title: string
+      required:
+        - email
+        - password
+    SignupResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        affiliate_code:
+          type: string
+      required:
+        - email
+        - affiliate_code
+    CommissionStatus:
+      type: string
+      enum:
+        - pending
+        - approved
+        - rejected
+        - paid
+        - failed
+    ReferralStatus:
+      type: string
+      enum:
+        - pending
+        - converted
+    AffiliateResponse:
+      type: object
+      properties:
+        affiliate_id:
+          type: integer
+        affiliate_code:
+          type: string
+        user_id:
+          type: integer
+        user_email:
+          type: string
+      required:
+        - affiliate_id
+        - affiliate_code
+        - user_id
+        - user_email
+    UpdateCommissionRequest:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/CommissionStatus"
+      required:
+        - status
+    CommissionResponse:
+      type: object
+      properties:
+        commission_id:
+          type: integer
+        commission_status:
+          $ref: "#/components/schemas/CommissionStatus"
+        commission_amount:
+          type: number
+        referred_user_id:
+          type: integer
+        referred_user_email:
+          type: string
+      required:
+        - commission_id
+        - commission_status
+        - commission_amount
+        - referred_user_id
+        - referred_user_email
+    TotalCommissionResponse:
+      type: object
+      properties:
+        total_commission_amount:
+          type: number
+      required:
+        - total_commission_amount
+    ReferralResponse:
+      type: object
+      properties:
+        referral_id:
+          type: integer
+        referral_status:
+          $ref: "#/components/schemas/ReferralStatus"
+        referred_user_id:
+          type: integer
+        referred_user_email:
+          type: string
+        commission_amount:
+          type: number
+      required:
+        - referral_id
+        - referral_status
+        - referred_user_id
+        - referred_user_email
+        - commission_amount
+    CreateAdminUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password

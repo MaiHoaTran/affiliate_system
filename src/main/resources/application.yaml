@@ -1,0 +1,46 @@
+---
+server:
+  http2.enabled: true
+  max-http-request-header-size: "64KB"
+  shutdown: graceful
+
+spring:
+  application:
+    name: "${APPLICATION_NAME:{{ cookiecutter.microservice_name }}}"
+  main:
+    banner-mode: OFF
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER # required for Hikaku compatibility
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://${DB_HOST:localhost}/${DB_NAME:postgres}"
+    username: ${DB_USER:}
+    password: ${DB_PASS:}
+    hikari:
+       maximumPoolSize: 20
+       minimumIdle: 1
+  flyway:
+    enabled: true
+    clean-disabled: true
+    baselineOnMigrate: true
+  quartz:
+    job-store-type: jdbc
+    properties:
+      org:
+        quartz:
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            isClustered: true
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+
+org:
+  quartz:
+    jobStore:
+      class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      dataSource: dataSource
+      tablePrefix: QRTZ_
+    scheduler:
+      timeZone: UTC

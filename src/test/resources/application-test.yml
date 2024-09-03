@@ -1,0 +1,27 @@
+spring:
+  test:
+    database:
+      replace: none
+  datasource:
+    url: jdbc:tc:postgresql:16-alpine://localhost/postgres
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  flyway:
+    enabled: false
+  quartz:
+    auto-startup: false
+    job-store-type: memory
+    properties:
+      org:
+        quartz:
+          jobStore:
+            isClustered: false
+    overwrite-existing-jobs: true
+  security:
+    jwt:
+      secret: v2Fyc0Qp+gJ9iDzbWo8BBtYIkZkSp1DfGp0FxzzpDRU=v2Fyc0Qp+gJ9iDzbWo8BBtYIkZkSp1DfGp0FxzzpDRU
+
+org:
+  quartz:
+    jobStore:
+      class: org.quartz.simpl.RAMJobStore
+      dataSource: dataSource
