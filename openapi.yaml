@@ -244,7 +244,7 @@ components:
               example: d926f9f6-3c2e-4dac-852c-b79e816bbfc1
             code:
               type: string
-              example: BAD_REQUEST
+              example: SERVER_ERROR
             title:
               type: string
               example: Validation error
@@ -262,10 +262,13 @@ components:
       properties:
         email:
           type: string
+          example: "test@demo.test"
         password:
           type: string
+          example: "1234567890"
         ref_code:
           title: string
+          example: "1234567890"
       required:
         - email
         - password
@@ -274,8 +277,10 @@ components:
       properties:
         email:
           type: string
+          example: "test@demo.test"
         affiliate_code:
           type: string
+          example: "1234567890"
       required:
         - email
         - affiliate_code
@@ -287,22 +292,28 @@ components:
         - rejected
         - paid
         - failed
+      example: paid
     ReferralStatus:
       type: string
       enum:
         - pending
         - converted
+      example: converted
     AffiliateResponse:
       type: object
       properties:
         affiliate_id:
           type: integer
+          example: 1
         affiliate_code:
           type: string
+          example: "1234567890"
         user_id:
           type: integer
+          example: 1
         user_email:
           type: string
+          example: "test@demo.test"
       required:
         - affiliate_id
         - affiliate_code
@@ -320,14 +331,18 @@ components:
       properties:
         commission_id:
           type: integer
+          example: 1
         commission_status:
           $ref: "#/components/schemas/CommissionStatus"
         commission_amount:
           type: number
+          example: 19.0
         referred_user_id:
           type: integer
+          example: 2
         referred_user_email:
           type: string
+          example: "test.2@demo.test"
       required:
         - commission_id
         - commission_status
@@ -339,6 +354,7 @@ components:
       properties:
         total_commission_amount:
           type: number
+          example: 38.0
       required:
         - total_commission_amount
     ReferralResponse:
@@ -346,14 +362,18 @@ components:
       properties:
         referral_id:
           type: integer
+          example: 1
         referral_status:
           $ref: "#/components/schemas/ReferralStatus"
         referred_user_id:
           type: integer
+          example: 2
         referred_user_email:
           type: string
+          example: "test.2@demo.test"
         commission_amount:
           type: number
+          example: 19.0
       required:
         - referral_id
         - referral_status
@@ -365,8 +385,10 @@ components:
       properties:
         email:
           type: string
+          example: "test@demo.test"
         password:
           type: string
+          example: "1234567890"
       required:
         - email
         - password

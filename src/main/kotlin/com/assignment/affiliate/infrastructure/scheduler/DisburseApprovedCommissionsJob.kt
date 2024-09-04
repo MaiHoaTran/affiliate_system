@@ -40,10 +40,10 @@ class DisburseApprovedCommissionsJob(
     }
 
     private fun sendFailedNotify() {
-        // TODO: Send notification that process to payout approved commissions are failed
+        // Send notification that process to payout approved commissions are failed
     }
 
     fun payout(commissions: List<PayoutCommission>) {
-        // TODO: Implement later
+        // Implement later
     }
 }

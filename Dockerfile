@@ -1,6 +1,6 @@
 FROM openjdk:17-jdk-slim
 
-COPY build/libs/affiliate-0.0.1.jar ./app.jar
+COPY bin/affiliate-0.0.1.jar ./app.jar
 
 EXPOSE 8080
 
