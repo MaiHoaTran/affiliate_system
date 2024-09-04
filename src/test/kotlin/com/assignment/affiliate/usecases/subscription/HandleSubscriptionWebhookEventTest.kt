@@ -3,7 +3,7 @@ package com.assignment.affiliate.usecases.subscription
 import com.assignment.affiliate.domain.subscription.SubscriptionStatus
 import com.assignment.affiliate.domain.user.User
 import com.assignment.affiliate.domain.user.UserRepository
-import com.assignment.affiliate.usecases.commission.CreateCommission
+import com.assignment.affiliate.usecases.commission.CreateCommissionForReferredUserId
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,11 +13,11 @@ import org.junit.jupiter.api.assertThrows
 class HandleSubscriptionWebhookEventTest {
     private val userRepository = mockk<UserRepository>(relaxed = true)
     private val saveSubscription = mockk<SaveSubscription>(relaxed = true)
-    private val createCommissionIfMissing = mockk<CreateCommission>(relaxed = true)
+    private val createCommissionForReferredUserIdIfMissing = mockk<CreateCommissionForReferredUserId>(relaxed = true)
     private val handleSubscriptionWebhookEvent = HandleSubscriptionWebhookEvent(
         userRepository,
         saveSubscription,
-        createCommissionIfMissing
+        createCommissionForReferredUserIdIfMissing
     )
 
     @Test
@@ -43,7 +43,7 @@ class HandleSubscriptionWebhookEventTest {
 
         verify { userRepository.findByEmail("test@example.com") }
         verify { saveSubscription(userId, SubscriptionStatus.PENDING) }
-        verify { createCommissionIfMissing(userId) }
+        verify { createCommissionForReferredUserIdIfMissing(userId) }
     }
 
     @Test
@@ -69,7 +69,7 @@ class HandleSubscriptionWebhookEventTest {
 
         verify { userRepository.findByEmail("test@example.com") }
         verify { saveSubscription(1, SubscriptionStatus.ACTIVE) }
-        verify { createCommissionIfMissing(1) }
+        verify { createCommissionForReferredUserIdIfMissing(1) }
     }
 
     @Test
@@ -106,6 +106,6 @@ class HandleSubscriptionWebhookEventTest {
         handleSubscriptionWebhookEvent(payload)
 
         verify(exactly = 0) { saveSubscription(any(), any()) }
-        verify(exactly = 0) { createCommissionIfMissing(1) }
+        verify(exactly = 0) { createCommissionForReferredUserIdIfMissing(1) }
     }
 }

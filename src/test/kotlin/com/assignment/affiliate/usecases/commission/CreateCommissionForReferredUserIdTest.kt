@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Instant
 
-class CreateCommissionTest {
+class CreateCommissionForReferredUserIdTest {
     private val clock = mockk<Clock>()
     private val referralRepository = mockk<ReferralRepository>()
     private val commissionRepository = mockk<CommissionRepository>()
-    private val createCommission = CreateCommission(clock, referralRepository, commissionRepository)
+    private val createCommissionForReferredUserId = CreateCommissionForReferredUserId(clock, referralRepository, commissionRepository)
 
     @Test
     fun `should create commission when referral exists and no existing commission`() {
@@ -38,7 +38,7 @@ class CreateCommissionTest {
         every { clock.instant() } returns now
         every { commissionRepository.upsert(commission) } returns commission
 
-        createCommission(userId)
+        createCommissionForReferredUserId(userId)
 
         verify { commissionRepository.upsert(commission) }
     }
@@ -48,7 +48,7 @@ class CreateCommissionTest {
         val userId = 123L
         every { referralRepository.findByReferredUserId(userId) } returns null
 
-        createCommission(userId)
+        createCommissionForReferredUserId(userId)
 
         verify(exactly = 0) { commissionRepository.upsert(any()) }
     }
@@ -69,7 +69,7 @@ class CreateCommissionTest {
         every { referralRepository.findByReferredUserId(userId) } returns referral
         every { commissionRepository.findByReferralId(referralId) } returns existingCommission
 
-        createCommission(userId)
+        createCommissionForReferredUserId(userId)
 
         verify(exactly = 0) { commissionRepository.upsert(any()) }
     }

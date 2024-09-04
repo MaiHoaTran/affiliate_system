@@ -9,22 +9,22 @@ import org.springframework.stereotype.Service
 import java.time.Clock
 
 /**
- * Use case to create commission by given user id:
+ * Use case to create commission by given referral user id:
  * - If cannot find any referrals by user id, do nothing
  * - If the commission with the user id is already created, do nothing
  * - Otherwise, create the new commission with default status as pending and has amount as [DEFAULT_COMMISSION_AMOUNT]
  */
 @Service
-class CreateCommission(
+class CreateCommissionForReferredUserId(
     private val clock: Clock,
     private val referralRepository: ReferralRepository,
     private val commissionRepository: CommissionRepository
 ) {
     /**
-     * @param userId the user id
+     * @param referredUserId the user id
      */
-    operator fun invoke(userId: Long) {
-        val referralId = referralRepository.findByReferredUserId(userId)?.id ?: return
+    operator fun invoke(referredUserId: Long) {
+        val referralId = referralRepository.findByReferredUserId(referredUserId)?.id ?: return
         commissionRepository.findByReferralId(referralId)?.let { return }
 
         val now = clock.instant()

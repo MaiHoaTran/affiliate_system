@@ -3,7 +3,7 @@ package com.assignment.affiliate.usecases.subscription
 import com.assignment.affiliate.domain.exception.UserNotFoundException
 import com.assignment.affiliate.domain.subscription.SubscriptionStatus
 import com.assignment.affiliate.domain.user.UserRepository
-import com.assignment.affiliate.usecases.commission.CreateCommission
+import com.assignment.affiliate.usecases.commission.CreateCommissionForReferredUserId
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service
 class HandleSubscriptionWebhookEvent(
     private val userRepository: UserRepository,
     private val saveSubscription: SaveSubscription,
-    private val createCommissionIfMissing: CreateCommission
+    private val createCommissionForReferredUserId: CreateCommissionForReferredUserId
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
     operator fun invoke(payload: String) {
@@ -39,7 +39,7 @@ class HandleSubscriptionWebhookEvent(
         }
 
         saveSubscription(userId, subscriptionStatus)
-        createCommissionIfMissing(userId)
+        createCommissionForReferredUserId(userId)
 
         logger.debug("Finishing handle subscription webhook event")
     }
